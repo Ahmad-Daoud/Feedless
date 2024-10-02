@@ -1,0 +1,9 @@
+body{
+    background-color: #836E5C;
+    color: whitesmoke;
+}
+#settings-btn{
+    background-color: #7c8b7d;
+    color: white;
+    border: solid whitesmoke 3px;
+}

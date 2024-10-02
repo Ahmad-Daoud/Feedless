@@ -1,0 +1,10 @@
+body {
+    background-color: #fdf6e3;  
+    color: #657b83;  
+}
+
+#settings-btn {
+    background-color: #268bd2;  
+    color: #fdf6e3;  
+    border: 1px solid #586e75;  
+}

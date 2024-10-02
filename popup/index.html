@@ -1,0 +1,37 @@
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div>
+        <h1>Feedless</h1>
+        <p>Take back control of your <b><u>focus</u></b>.</p>
+    </div>
+    <div>
+        <h2> Time spent using social media :</h2>
+        <span class="descriptive-text"> 10 minutes Today </span>
+        <span class="descriptive-text"> 3 hours in the past 7 days </span>
+    </div>
+    <div>
+        <h2>Your current restrictions : </h2>
+        <ol class="restrictions">
+            <li>Facebook  <span style="color:orange; text-align: right;">Moderate</span></li>
+            <li>Instagram  <span style="color:red; text-align: right;">Strict</span></li>
+            <li>Twitter  <span style="color:green; text-align: right;">Tolerated</span></li>
+        </ol>
+    </div>
+    <label for="theme-select">Choose a theme:</label>
+    <select id="theme-select">
+        <option value="" disabled selected id="disabled-select"></option>
+        <option value="light">Light Theme</option>
+        <option value="dark">Dark Theme</option>
+        <option value="solarized">Solarized Theme</option>
+        <option value="brown">Brown Theme</option>
+    </select>
+    <button id="settings-btn">Settings</button>
+    <script src="/dist/popup.js"></script>
+</body>
+</html>
