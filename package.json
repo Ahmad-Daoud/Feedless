@@ -1,0 +1,19 @@
+{
+  "name": "typescript-chrome-extension-starter",
+  "version": "0.1.0",
+  "description": "Get started writing a Chrome extension in TypeScript",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/app.js"
+  },
+  "dependencies": {
+    "@types/chrome": "^0.0.116",
+    "webextension-polyfill-ts": "^0.12.0"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^3.0.0",
+    "tslib": "^2.6.1",
+    "typescript": "^5.0.0"
+  }
+}
