@@ -3,14 +3,22 @@ class Popup {
     htmlDoc : Document;
     selectElement : HTMLElement | null;
     disabledSelect : HTMLElement | null;
+    settingsButton : HTMLElement | null;
     constructor() {
         this.htmlDoc = document;
         this.selectElement = this.htmlDoc.getElementById("theme-select");
         this.disabledSelect = this.htmlDoc.getElementById("disabled-select");
         this.loadTheme();
+        this.settingsButton = document.querySelector("#settings-btn")
         this.selectElement?.addEventListener("change", (event) => {
             this.changeTheme((event.target as HTMLSelectElement).value);
         });
+        if(this.settingsButton != null){
+            this.settingsButton.addEventListener("click", function() {
+                const settingsUrl = chrome.runtime.getURL("../settings/index.html");
+                window.open(settingsUrl, '_blank');
+            });
+        }
     }
     loadTheme() {
         let theme : string | null = "";

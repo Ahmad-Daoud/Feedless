@@ -5,8 +5,11 @@
     "action" : {
         "default_popup": "popup/index.html"
     },
-    "options_ui": {
-      "page": "settings/index.html",
-      "open_in_tab": true
-    }
+    "permissions": ["storage"],
+    "web_accessible_resources": [
+      {
+        "resources": ["settings/index.html"],
+        "matches": ["<all_urls>"]
+      }
+    ]
 }
