@@ -1,5 +1,5 @@
 import * as Site from './sites.js';
-import { Sites } from './types';
+import { Sites, Site as SiteType } from './types';
 class Settings {
     Site: any;
     siteList: HTMLElement | null;
@@ -33,11 +33,16 @@ class Settings {
         });
     }
 
-    // addAffectedSite(site: string) {
-    //     this.sites.push(site);
-    //     this.Site.saveSites(this.sites);
-    //     this.displayBlockedSites();
-    // }
+    addAffectedSite(site : SiteType, name : string) {
+        this.Site.retrieveSites((retrievedSites : Sites) => {
+            this.sites = retrievedSites;
+            if (!this.sites || typeof this.sites !== 'object' || Object.keys(this.sites).length === 0) {
+                this.sites = {};
+            }
+            this.sites[name] = {url : site.url , priority : site.priority};
+            this.Site.saveSites(this.sites, () => this.displayBlockedSites());
+        });
+    }
 
     changeTheme(theme: string) {
         chrome.storage.sync.set({Theme : theme});
