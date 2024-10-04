@@ -1,12 +1,20 @@
-class Settings{
-    siteList : HTMLElement | null;
-    constructor(){
-        this.siteList = document.querySelector("#blocked-sites-list")
+import * as Site from './sites.js';
+
+class Settings {
+    Site: any;
+    siteList: HTMLElement | null;
+    sites: string[] = [];
+    
+    constructor() {
+        this.Site = Site;
+        this.siteList = document.querySelector("#blocked-sites-list");
         this.displayBlockedSites();
         this.loadTheme();
     }
-    displayBlockedSites(){
-        var finalHTML : string = "";
+
+    displayBlockedSites() {
+        var finalHTML: string = "";
+        this.Site.retreiveSites();
         // Go through a foreach loop throughout every blocked site
 
         // Remove Later
@@ -17,18 +25,26 @@ class Settings{
         `;
         // Remove Later
         
-        if(this.siteList != null){
+        if (this.siteList != null) {
             this.siteList.innerHTML = finalHTML;
         }
     }
-    addBlockedSite(){
-        // Adding blocked site
+
+    addAffectedSite(site: string) {
+        this.sites.push(site);
+        this.Site.saveSites(this.sites);
         this.displayBlockedSites();
     }
+
+    changeTheme(theme: string) {
+        localStorage.setItem("Theme", theme);
+        this.loadTheme();
+    }
+
     loadTheme() {
-        let theme : string | null = "";
-        if(localStorage.getItem("Theme") != null) {
-            theme = (localStorage.getItem("Theme"));
+        let theme: string | null = "";
+        if (localStorage.getItem("Theme") != null) {
+            theme = localStorage.getItem("Theme");
             console.log(theme);
         }
         const existingLink = document.getElementById("theme-stylesheet");
@@ -39,23 +55,17 @@ class Settings{
         link.rel = 'stylesheet';
         link.type = 'text/css';
         link.id = 'theme-stylesheet';
-        if(theme == "dark") {
+        if (theme == "dark") {
             link.href = '/settings/dark.css';
-        }
-        else if(theme == "light") {
+        } else if (theme == "light") {
             link.href = '/settings/light.css';
-        }
-        else if(theme == "solarized") {
+        } else if (theme == "solarized") {
             link.href = '/settings/solarized.css';
-        }
-        else {
+        } else {
             link.href = '/settings/brown.css';
         }
         document.head.appendChild(link);
     }
-    changeTheme(theme : string) {
-        localStorage.setItem("Theme", theme);
-        this.loadTheme();
-    }
 }
+
 new Settings();
