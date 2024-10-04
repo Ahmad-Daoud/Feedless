@@ -21,49 +21,52 @@ class Popup {
         }
     }
     loadTheme() {
-        let theme : string | null = "";
-        if(localStorage.getItem("Theme") != null) {
-            theme = (localStorage.getItem("Theme"));
-            console.log(theme);
-        }
-        const existingLink = this.htmlDoc.getElementById("theme-stylesheet");
-        if (existingLink) {
-            existingLink.remove();
-        }
-        var link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.id = 'theme-stylesheet';
-        if(theme == "dark") {
-            link.href = '/popup/dark.css';
-        }
-        else if(theme == "light") {
-            link.href = '/popup/light.css';
-        }
-        else if(theme == "solarized") {
-            link.href = '/popup/solarized.css';
-        }
-        else {
-            link.href = '/popup/brown.css';
-        }
-        if(this.disabledSelect != null && theme) {
-            if(theme == "light") {
-                this.disabledSelect.innerText = "Light Theme";
+        
+        chrome.storage.sync.get("Theme", (result) => {
+            let theme : string | null = "";
+            if(result.Theme){
+                theme = result.Theme;
             }
-            else if(theme == "dark") {
-                this.disabledSelect.innerText = "Dark Theme";
+            const existingLink = this.htmlDoc.getElementById("theme-stylesheet");
+            if (existingLink) {
+                existingLink.remove();
+            }
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.id = 'theme-stylesheet';
+            if(theme == "dark") {
+                link.href = '/popup/dark.css';
+            }
+            else if(theme == "light") {
+                link.href = '/popup/light.css';
             }
             else if(theme == "solarized") {
-                this.disabledSelect.innerText = "Solarized Theme";
+                link.href = '/popup/solarized.css';
             }
             else {
-                this.disabledSelect.innerText = "Brown Theme";
+                link.href = '/popup/brown.css';
+                console.log("Theme is " + theme);
             }
-        }
-        this.htmlDoc.head.appendChild(link);
+            if(this.disabledSelect != null && theme) {
+                if(theme == "light") {
+                    this.disabledSelect.innerText = "Light Theme";
+                }
+                else if(theme == "dark") {
+                    this.disabledSelect.innerText = "Dark Theme";
+                }
+                else if(theme == "solarized") {
+                    this.disabledSelect.innerText = "Solarized Theme";
+                }
+                else {
+                    this.disabledSelect.innerText = "Brown Theme";
+                }
+            }
+            this.htmlDoc.head.appendChild(link);
+        })
     }
     changeTheme(theme : string) {
-        localStorage.setItem("Theme", theme);
+        chrome.storage.sync.set({Theme : theme});
         this.loadTheme();
     }
 }

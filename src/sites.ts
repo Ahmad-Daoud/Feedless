@@ -1,9 +1,15 @@
-export function saveSites(sites : string[]): void{
-    localStorage.setItem("sites", JSON.stringify(sites));
+import { Sites } from './types';
+
+export function saveSites(sites: Sites): void { 
+    chrome.storage.sync.set({ sites: sites });
 }
-export function retreiveSites() : string[]{
-    if(localStorage.getItem("sites") != null){
-        return JSON.parse(localStorage.getItem("sites") as string);
-    }
-    return [];
+
+export function retrieveSites(callback: (sites: Sites) => void): void { 
+    chrome.storage.sync.get("sites", function(result) {
+        if (result.sites) {
+            callback(result.sites); 
+        } else {
+            callback({}); 
+        }
+    });
 }

@@ -22,7 +22,8 @@ a{
     align-items: center;
 }
 .sidebar div a{
-    
+    font-size: 20px;
+
 }
 .content{
     width: 100%;
@@ -34,8 +35,9 @@ h1{
     margin-right: 20%;
 }
 #blocked-sites-list {
-    width: 100%;
-    padding-left:30%;
+    width: 90%;
+    margin-left:10%;
+    padding-left: 5%;
     box-sizing:border-box;
     display: grid;
     gap: 40px;
