@@ -3,44 +3,133 @@ import { Sites, Site as SiteType } from './types';
 class Settings {
     Site: any;
     siteList: HTMLElement | null;
+    blockButton : HTMLElement | null;
     sites: Sites = {};
-    
+    blockedPopupState: boolean = false;
+    modal : HTMLElement | null;
+    modalchoicelist : HTMLElement | null;
     constructor() {
         this.Site = Site;
         this.siteList = document.querySelector("#blocked-sites-list");
+        this.blockButton = document.querySelector("#add-blocked-btn");
+        this.modal = document.querySelector(".modal");
         this.displayBlockedSites();
         this.loadTheme();
+        this.modalchoicelist = document.querySelector("#site-choice-list");
+        if(this.blockButton != null){
+            this.blockButton.addEventListener("click", () => {
+                this.openBlockedPopup();
+            });
+        }
+        document.addEventListener("keydown", (event) => {
+            // Close modal with esc
+            if (event.key === "Escape") {
+                this.closeBlockedPopup();
+            }
+        });
+        if (this.modal != null) {
+            this.modal.addEventListener("click", (event) => {
+                const target = event.target as HTMLElement;
+                const modalContent = this.modal!.querySelector(".modal-content");
+                if (target === this.modal && !modalContent!.contains(target)) {
+                    this.closeBlockedPopup();
+                }
+            });
+        }
+    }
+    displayListUnblockedSites() {
+        // This function is going to display the base sites which have not been chosen.
+        // Fetch base sites here
+        fetch('/site-data/base-sites.json')
+        .then(response => response.json())
+        .then((data) => {
+            // Remove the sites that are already active
+            Object.keys(data).forEach((siteName => {
+                console.log(siteName);
+                if (this.sites[siteName]) {
+                    delete data[siteName];
+                }
+            }))
+            // Display the remaining sites
+            this.modalchoicelist!.innerHTML = "";
+            Object.keys(data).forEach((siteName) => {
+                const site = data[siteName];
+                const siteElement = document.createElement("div");
+                siteElement.innerHTML = `<h2>${siteName}</h2><p>${site.url}</p><button class="add-site-btn">Add</button>`;
+                this.modalchoicelist!.appendChild(siteElement);
+                siteElement.querySelector("button")!.addEventListener("click", () => {
+                    this.addAffectedSite(site, siteName);
+                    siteElement.remove();
+                });
+            });
+        })
+        .catch(error => console.error('Error fetching the sites:', error));
     }
 
+    openBlockedPopup() {
+        if(!this.blockedPopupState && this.modal != null){
+            this.modal.classList.add("open-modal");
+            this.blockedPopupState = true;
+            this.displayListUnblockedSites();
+        }
+    }
+    closeBlockedPopup() {
+        if(this.blockedPopupState && this.modal != null){
+            this.modal.classList.remove("open-modal");
+            this.blockedPopupState = false;
+        }
+    }
     displayBlockedSites() {
         var finalHTML: string = "";
+        this.siteList!.innerHTML = "";
         this.Site.retrieveSites((retrievedSites : Sites) => {
             this.sites = retrievedSites;
             if (!this.sites || typeof this.sites !== 'object' || Object.keys(this.sites).length === 0) {
                 finalHTML = "<p>You have not yet chosen any sites.</p>";
+                this.siteList!.innerHTML = finalHTML;
             } else {
                 // Go through each blocked site
                 for (const key in this.sites) {
                     if (this.sites.hasOwnProperty(key)) {
-                        const site = this.sites[key]; // types.ts for properties
-                        finalHTML += `<div> <h2>${key}</h2> <p>${site.url}</p><p>${site.priority}</p></div>`;
+                        const site = this.sites[key]; 
+                        const siteElement = document.createElement('div');
+                        siteElement.className = 'site-el';
+
+                        const siteInfo = document.createElement('div');
+                        siteInfo.className = 'site-info';
+                        siteInfo.innerHTML = `<h2>${key}</h2><p>${site.url}</p><p>${site.priority}</p>`;
+
+
+                        const removeButton = document.createElement('button');
+                        removeButton.textContent = 'Remove site';
+
+                        removeButton.addEventListener('click', () => {
+                            // Delete site
+                            console.log('Deleting site:', key);
+                            delete this.sites[key];
+                            this.Site.saveSites(this.sites, () => this.displayBlockedSites());
+                            this.displayBlockedSites();
+                        });
+                        siteElement.appendChild(siteInfo);
+                        siteElement.appendChild(removeButton);
+
+                        if (this.siteList != null) {
+                            this.siteList.appendChild(siteElement);
+                        }
                     }
                 }
             }
-            if (this.siteList != null) {
-                this.siteList.innerHTML = finalHTML;
-            }
         });
     }
-
     addAffectedSite(site : SiteType, name : string) {
         this.Site.retrieveSites((retrievedSites : Sites) => {
             this.sites = retrievedSites;
             if (!this.sites || typeof this.sites !== 'object' || Object.keys(this.sites).length === 0) {
                 this.sites = {};
             }
-            this.sites[name] = {url : site.url , priority : site.priority};
+            this.sites[name] = {url : site.url , priority : site.priority? site.priority : 1};
             this.Site.saveSites(this.sites, () => this.displayBlockedSites());
+            this.displayBlockedSites();
         });
     }
 
@@ -48,7 +137,6 @@ class Settings {
         chrome.storage.sync.set({Theme : theme});
         this.loadTheme();
     }
-
     loadTheme() {
         chrome.storage.sync.get("Theme" , (result) => {
             let theme: string | null = "";

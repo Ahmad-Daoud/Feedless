@@ -1,7 +1,7 @@
 {
-  "name": "typescript-chrome-extension-starter",
+  "name": "Feedless",
   "version": "0.1.0",
-  "description": "Get started writing a Chrome extension in TypeScript",
+  "description": "Browser extension aimed at helping you focus better by reducing news feed distractions.",
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js"

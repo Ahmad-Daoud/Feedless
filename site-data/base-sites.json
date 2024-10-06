@@ -1,0 +1,24 @@
+{
+    "Google": {
+      "url": "https://www.google.com"
+    },
+    "YouTube": {
+      "url": "https://www.youtube.com"
+    },
+    "Facebook": {
+      "url": "https://www.facebook.com"
+    },
+    "GitHub": {
+      "url": "https://www.github.com"
+    },
+    "Twitter": {
+      "url": "https://www.twitter.com"
+    },
+    "Reddit": {
+      "url": "https://www.reddit.com"
+    },
+    "StackOverflow": {
+      "url": "https://stackoverflow.com"
+    }
+  }
+  
