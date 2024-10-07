@@ -1,24 +1,30 @@
 {
-    "Google": {
-      "url": "https://www.google.com"
-    },
     "YouTube": {
-      "url": "https://www.youtube.com"
+      "url": "youtube.com",
+      "priorityRules" : {
+        "1" : "Gives you a skippable message which blocks videos.",
+        "2" : "Displays only the first 5 elements of a youtube page.",
+        "3" : "Blocks videos unless a timeout is chosen."
+      }
     },
-    "Facebook": {
-      "url": "https://www.facebook.com"
-    },
-    "GitHub": {
-      "url": "https://www.github.com"
-    },
-    "Twitter": {
-      "url": "https://www.twitter.com"
+    "X": {
+      "url": "x.com",
+      "priorityRules" : {
+        "1" : "Gives you a skippable message warns you about feed-scrolling.",
+        "2" : "Shows only 10 tweets on home page.",
+        "3" : "Blocks videos unless a timeout is chosen."
+      }
     },
     "Reddit": {
-      "url": "https://www.reddit.com"
+      "url": "reddit.com",
+      "priorityRules" : {
+        "1" : "Gives you a skippable message warns you about feed-scrolling.",
+        "2" : "Shows only 5 posts on home page.",
+        "3" : "Blocks videos unless a timeout is chosen."
+      }
     },
-    "StackOverflow": {
-      "url": "https://stackoverflow.com"
+    "Facebook": {
+      "url": "facebook.com"
     }
   }
   

@@ -35,18 +35,35 @@ h1{
     margin-right: 20%;
 }
 #blocked-sites-list {
-    width: 70%;
-    margin-left:10%;
+    width: 80%;
+    margin-left:5%;
     padding-left: 5%;
     box-sizing:border-box;
     display: grid;
     gap: 40px;
     margin-top: 70px;
-    height: 70vh;
+    height: 65vh;
     overflow-y: scroll;
     grid-template-rows: repeat(auto-fill, minmax(80px, 1fr));
 }
+.site-info{
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr;
+    place-content: center;
+    place-items: center;
+}
+.blocked-site-name{
 
+}
+.blocked-site-priority{
+
+}
+.none-chosen{
+    text-align: center;
+    margin-right: 22%;
+    font-size: 24px;
+    text-decoration: solid;
+}
 .site{
     font-size: 24px;
     font-weight: 500;
@@ -63,6 +80,7 @@ h1{
     border-radius: 10px;
     margin-left: 32%;
 }
+
 .modal {
   position: fixed;
   left: 0;
@@ -86,7 +104,8 @@ h1{
   transform: translate(-50%, -50%);
   background-color: white;
   padding: 1rem 1.5rem;
-  width: 24rem;
+  width: 50rem;
+  height: 30rem;
   border-radius: 0.5rem;
 }
 
@@ -102,13 +121,16 @@ h1{
     margin-top: 70px;
     margin-left: 10%;
     width: 90%;
-    grid-template-columns: repeat(3, 1fr);
 }
 .site-el{
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 3fr 2fr;
     height: 80px;
 }
 .site-el button{
     width: 30%;
+}
+
+.blocked-site-remove-button{
+    font-size: 12px !important;
 }

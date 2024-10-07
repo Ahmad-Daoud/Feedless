@@ -85,27 +85,59 @@ class Settings {
         this.Site.retrieveSites((retrievedSites : Sites) => {
             this.sites = retrievedSites;
             if (!this.sites || typeof this.sites !== 'object' || Object.keys(this.sites).length === 0) {
-                finalHTML = "<p>You have not yet chosen any sites.</p>";
+                finalHTML = '<p class="none-chosen">You have not yet chosen any sites.</p>';
                 this.siteList!.innerHTML = finalHTML;
             } else {
                 // Go through each blocked site
                 for (const key in this.sites) {
                     if (this.sites.hasOwnProperty(key)) {
-                        const site = this.sites[key]; 
                         const siteElement = document.createElement('div');
                         siteElement.className = 'site-el';
 
                         const siteInfo = document.createElement('div');
                         siteInfo.className = 'site-info';
-                        siteInfo.innerHTML = `<h2>${key}</h2><p>${site.url}</p><p>${site.priority}</p>`;
-
-
+                        siteInfo.innerHTML = `<h2 class="blocked-site-name">${key}</h2>`;
+                        this.Site.getSitePriorities(key, (priorities: { [propertyKey: string]: string }) => {
+                            if (priorities) {
+                                const prioritySelect = document.createElement('select');
+                                prioritySelect.className = "blocked-site-select";
+                                prioritySelect.multiple = true;  
+                        
+                                const selectedPriorities: string[] = [];
+                        
+                                Object.entries(priorities).forEach(([priorityKey, description]) => {
+                                    const option = document.createElement('option');
+                                    option.value = priorityKey;
+                                    option.textContent = description;
+                        
+                                    prioritySelect.appendChild(option);
+                                });
+                        
+                                prioritySelect.addEventListener('change', () => {
+                                    selectedPriorities.length = 0;
+                                    Array.from(prioritySelect.selectedOptions).forEach((option) => {
+                                        selectedPriorities.push(option.value);
+                                    });
+                                });
+                        
+                                siteInfo.appendChild(prioritySelect);
+                        
+                                const submitButton = document.createElement('button');
+                                submitButton.textContent = "Update Priorities";
+                                submitButton.addEventListener('click', () => {
+                                    // this.updateSitePriorities(key, selectedPriorities);
+                                    console.log("Our updated priorities : " , selectedPriorities , " for value: " , key)
+                                });
+                                siteInfo.appendChild(submitButton);
+                            } else {
+                                console.log("Not found for: ", key);
+                            }
+                        });
+                        
                         const removeButton = document.createElement('button');
                         removeButton.textContent = 'Remove site';
-
+                        removeButton.className = "blocked-site-remove-button"
                         removeButton.addEventListener('click', () => {
-                            // Delete site
-                            console.log('Deleting site:', key);
                             delete this.sites[key];
                             this.Site.saveSites(this.sites, () => this.displayBlockedSites());
                             this.displayBlockedSites();
