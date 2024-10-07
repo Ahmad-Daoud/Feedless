@@ -1,5 +1,6 @@
 import * as Site from './sites.js';
 import { Sites, Site as SiteType } from './types';
+import { MultiSelectTag} from './MultiSelectTag.js';
 class Settings {
     Site: any;
     siteList: HTMLElement | null;
@@ -99,29 +100,47 @@ class Settings {
                         siteInfo.innerHTML = `<h2 class="blocked-site-name">${key}</h2>`;
                         this.Site.getSitePriorities(key, (priorities: { [propertyKey: string]: string }) => {
                             if (priorities) {
+                                const selectedPriorities: string[] = [];
+                                console.log("yo test", priorities);
+                                // ERROR IS HAPPENING HERE
+                                const multiSelectTag = new MultiSelectTag('priority-select', {
+                                    placeholder: 'Select priorities...',
+                                    onChange: (selectedValues) => {
+                                        selectedPriorities.length = 0;
+                                        selectedValues.forEach(value => selectedPriorities.push(value.value));
+                                        this.savePriorities(selectedPriorities, key);
+                                    },
+                                    tagColor: {
+                                        textColor: '#FF5D29',
+                                        borderColor: '#FF5D29',
+                                        bgColor: '#FFE9E2'
+                                    }
+                                });
+                                // ERROR IS HAPPENING BEFORE HERE
                                 const prioritySelect = document.createElement('select');
+                                prioritySelect.id = 'priority-select'; 
                                 prioritySelect.className = "blocked-site-select";
                                 prioritySelect.multiple = true;  
-                        
-                                const selectedPriorities: string[] = [];
-                        
+                            
+                                // Populate the select options
                                 Object.entries(priorities).forEach(([priorityKey, description]) => {
                                     const option = document.createElement('option');
                                     option.value = priorityKey;
                                     option.textContent = description;
-                        
+                                    option.selected = false; // Default to not selected
+                            
                                     prioritySelect.appendChild(option);
                                 });
-                        
-                                prioritySelect.addEventListener('change', () => {
-                                    selectedPriorities.length = 0;
-                                    Array.from(prioritySelect.selectedOptions).forEach((option) => {
-                                        selectedPriorities.push(option.value);
-                                    });
-                                });
-                        
-                                siteInfo.appendChild(prioritySelect);
-                        
+                            
+                                // Add the select element to the MultiSelectTag instance
+                                if(multiSelectTag != null){
+                                    multiSelectTag.appendSelectElement(prioritySelect);
+                                    const container = multiSelectTag.container;
+                                    if(container != null){
+                                        siteInfo.appendChild(container);
+                                    }
+                                }
+                                
                                 const submitButton = document.createElement('button');
                                 submitButton.textContent = "Update Priorities";
                                 submitButton.addEventListener('click', () => {
@@ -152,6 +171,9 @@ class Settings {
                 }
             }
         });
+    }
+    savePriorities(priorities : string[], siteKey : string) {
+        console.log("Our priorities are: " , priorities , " for site: " , siteKey);
     }
     addAffectedSite(site : SiteType, name : string) {
         this.Site.retrieveSites((retrievedSites : Sites) => {
