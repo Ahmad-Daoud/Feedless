@@ -1,0 +1,30 @@
+{
+    "YouTube": {
+      "url": "youtube.com",
+      "priorityRules" : {
+        "1" : "Gives you a skippable message which blocks videos.",
+        "2" : "Displays only the first 5 elements of a youtube page.",
+        "3" : "Blocks videos unless a timeout is chosen."
+      }
+    },
+    "X": {
+      "url": "x.com",
+      "priorityRules" : {
+        "1" : "Gives you a skippable message warns you about feed-scrolling.",
+        "2" : "Shows only 10 tweets on home page.",
+        "3" : "Blocks videos unless a timeout is chosen."
+      }
+    },
+    "Reddit": {
+      "url": "reddit.com",
+      "priorityRules" : {
+        "1" : "Gives you a skippable message warns you about feed-scrolling.",
+        "2" : "Shows only 5 posts on home page.",
+        "3" : "Blocks videos unless a timeout is chosen."
+      }
+    },
+    "Facebook": {
+      "url": "facebook.com"
+    }
+  }
+  
