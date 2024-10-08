@@ -182,7 +182,7 @@ class Settings {
                 this.sites = {};
             }
             this.sites[name] = {url : site.url , priority : site.priority? site.priority : 1};
-            this.Site.saveSites(this.sites, () => this.displayBlockedSites());
+            this.Site.saveSites(this.sites);
             this.displayBlockedSites();
         });
     }
