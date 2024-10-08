@@ -1,5 +1,5 @@
-export interface Site {
+export interface SiteElement {
     url: string;
-    priority: number;
+    priority: string[];
 }
-export type Sites = Record<string, Site>;
+export type Sites = Record<string, SiteElement>;

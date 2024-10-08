@@ -1,12 +1,11 @@
 import * as Site from './sites.js';
-import { Sites, Site as SiteType } from './types';
-import { MultiSelectTag} from './MultiSelectTag.js';
+import { Sites, SiteElement as SiteType } from './types';
 class Settings {
     Site: any;
     siteList: HTMLElement | null;
     blockButton : HTMLElement | null;
     sites: Sites = {};
-    blockedPopupState: boolean = false;
+    popupState: boolean = false;
     modal : HTMLElement | null;
     modalchoicelist : HTMLElement | null;
     constructor() {
@@ -67,17 +66,71 @@ class Settings {
         .catch(error => console.error('Error fetching the sites:', error));
     }
 
+    displayPriorityList(key : string) {
+        this.Site.getSitePriorities(key, (priorities: { [propertyKey: string]: string }) => {
+            this.modalchoicelist!.innerHTML = "";
+            if (priorities) {
+                this.Site.retrieveSites((retrievedSites : Sites) => {
+                    for (const priority in priorities) {
+                        if (priorities.hasOwnProperty(priority)) {
+                            const priorityElement = document.createElement("div");
+                            if(!retrievedSites[key].priority.includes(priority)){
+                                priorityElement.innerHTML = `<h2>${priority}</h2><p>${priorities[priority]}</p><button class="add-site-btn">Add</button>`;
+                            }
+                            else{
+                                priorityElement.innerHTML = `<h2>${priority}</h2><p>${priorities[priority]}</p><button class="add-site-btn">Remove</button>`;
+                            }
+                            this.modalchoicelist!.appendChild(priorityElement);
+                            if(!retrievedSites[key].priority.includes(priority)){
+                                priorityElement.querySelector("button")!.addEventListener("click", () => {
+                                    this.addPriority(priority, key);
+                                });
+                            }
+                            else{
+                                priorityElement.querySelector("button")!.addEventListener("click", () => {
+                                    this.removePriority(priority, key)
+                                });
+                            }
+                        }
+                        else{
+                            console.log("Priority " , priority, " does not exist for : ", key);
+                        }
+                    }
+                });
+            } else {
+                console.log("Priorities not found for: ", key);
+            }
+        })
+    }
+
     openBlockedPopup() {
-        if(!this.blockedPopupState && this.modal != null){
+        if(!this.popupState && this.modal != null){
             this.modal.classList.add("open-modal");
-            this.blockedPopupState = true;
+            this.popupState = true;
             this.displayListUnblockedSites();
+            this.modalchoicelist!.innerHTML = "";
         }
     }
     closeBlockedPopup() {
-        if(this.blockedPopupState && this.modal != null){
+        if(this.popupState && this.modal != null){
             this.modal.classList.remove("open-modal");
-            this.blockedPopupState = false;
+            this.popupState = false;
+            this.modalchoicelist!.innerHTML = "";
+        }
+    }
+    openPriorityPopup(key:string) {
+        if(!this.popupState && this.modal != null){
+            this.modal.classList.add("open-modal");
+            this.popupState = true;
+            this.modalchoicelist!.innerHTML = "";
+            this.displayPriorityList(key);
+        }
+    }
+    closePriorityPopup() {
+        if(this.popupState && this.modal != null){
+            this.modal.classList.remove("open-modal");
+            this.popupState = false;
+            this.modalchoicelist!.innerHTML = "";
         }
     }
     displayBlockedSites() {
@@ -100,54 +153,13 @@ class Settings {
                         siteInfo.innerHTML = `<h2 class="blocked-site-name">${key}</h2>`;
                         this.Site.getSitePriorities(key, (priorities: { [propertyKey: string]: string }) => {
                             if (priorities) {
-                                const selectedPriorities: string[] = [];
-                                console.log("yo test", priorities);
-                                // ERROR IS HAPPENING HERE
-                                const multiSelectTag = new MultiSelectTag('priority-select', {
-                                    placeholder: 'Select priorities...',
-                                    onChange: (selectedValues) => {
-                                        selectedPriorities.length = 0;
-                                        selectedValues.forEach(value => selectedPriorities.push(value.value));
-                                        this.savePriorities(selectedPriorities, key);
-                                    },
-                                    tagColor: {
-                                        textColor: '#FF5D29',
-                                        borderColor: '#FF5D29',
-                                        bgColor: '#FFE9E2'
-                                    }
+                                const priorityElement = document.createElement("button");
+                                priorityElement.textContent = 'Change priority';
+                                priorityElement.className = "blocked-site-priority-button"
+                                priorityElement.addEventListener('click', () => {
+                                    this.openPriorityPopup(key);
                                 });
-                                // ERROR IS HAPPENING BEFORE HERE
-                                const prioritySelect = document.createElement('select');
-                                prioritySelect.id = 'priority-select'; 
-                                prioritySelect.className = "blocked-site-select";
-                                prioritySelect.multiple = true;  
-                            
-                                // Populate the select options
-                                Object.entries(priorities).forEach(([priorityKey, description]) => {
-                                    const option = document.createElement('option');
-                                    option.value = priorityKey;
-                                    option.textContent = description;
-                                    option.selected = false; // Default to not selected
-                            
-                                    prioritySelect.appendChild(option);
-                                });
-                            
-                                // Add the select element to the MultiSelectTag instance
-                                if(multiSelectTag != null){
-                                    multiSelectTag.appendSelectElement(prioritySelect);
-                                    const container = multiSelectTag.container;
-                                    if(container != null){
-                                        siteInfo.appendChild(container);
-                                    }
-                                }
-                                
-                                const submitButton = document.createElement('button');
-                                submitButton.textContent = "Update Priorities";
-                                submitButton.addEventListener('click', () => {
-                                    // this.updateSitePriorities(key, selectedPriorities);
-                                    console.log("Our updated priorities : " , selectedPriorities , " for value: " , key)
-                                });
-                                siteInfo.appendChild(submitButton);
+                                siteInfo.appendChild(priorityElement);
                             } else {
                                 console.log("Not found for: ", key);
                             }
@@ -172,8 +184,11 @@ class Settings {
             }
         });
     }
-    savePriorities(priorities : string[], siteKey : string) {
-        console.log("Our priorities are: " , priorities , " for site: " , siteKey);
+    addPriority(priority : string, siteKey : string) {
+        this.Site.addUserSitePriority(siteKey, priority, () => {this.displayPriorityList(siteKey)});
+    }
+    removePriority(priority : string, siteKey : string) {
+        this.Site.removeUserSitePriority(siteKey, priority, () => {this.displayPriorityList(siteKey)});
     }
     addAffectedSite(site : SiteType, name : string) {
         this.Site.retrieveSites((retrievedSites : Sites) => {
@@ -181,7 +196,8 @@ class Settings {
             if (!this.sites || typeof this.sites !== 'object' || Object.keys(this.sites).length === 0) {
                 this.sites = {};
             }
-            this.sites[name] = {url : site.url , priority : site.priority? site.priority : 1};
+            // for future developpement : we can make it so we retrieve priorities if they already existed before. This is not necessary but might be quality of life
+            this.sites[name] = {url : site.url , priority : []};
             this.Site.saveSites(this.sites);
             this.displayBlockedSites();
         });
