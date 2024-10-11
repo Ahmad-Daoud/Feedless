@@ -6,8 +6,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="multi-select-tag.css">
 </head>
 <body>
+    <div class="modal">
+        <div class="modal-content">
+            <div id="site-choice-list">
+                
+
+            </div>
+        </div>
+    </div>
     <div class="sidebar-content">
         <div class="sidebar">
             <div id="general">
@@ -29,11 +38,12 @@
         <div class="content">
             <h1>Feedless</h1>
             <div id="blocked-sites-list">
-    
+                
             </div>
+            <button id="add-blocked-btn">Add blocked site</button>
         </div>
     </div>
 
-    <script src="/dist/settings.js"></script>
+    <script src="/dist/settings.js" type="module"></script>
 </body>
 </html>
