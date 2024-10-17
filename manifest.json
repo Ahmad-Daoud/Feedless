@@ -7,7 +7,9 @@
     "default_popup": "popup/index.html"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "tabs",
+    "webNavigation"
   ],
   "host_permissions": [
     "http://*/*",
@@ -20,11 +22,9 @@
     }
   ],
   "options_page": "settings/index.html",
-  "content_scripts": [
+  "background": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["dist/app.js"],
-      "run_at": "document_idle",
+      "service-worker" : "dist/background/background-worker.js",
       "type": "module"
     }
   ]
